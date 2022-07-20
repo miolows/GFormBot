@@ -1,87 +1,8 @@
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
 import time
 import numpy as np
 
-class IQuestion():
-    def __init__(self, question_holder):
-        self.holder = question_holder
-        
-        self.question = self.holder.find_element(By.CLASS_NAME, 'M7eMe').text
-        self.required = self.is_required()
-        print(self.question)
-
-    def is_required(self):
-        req = self.holder.find_elements(By.CLASS_NAME, 'vnumgf')
-        if len(req)>0:
-            return True
-        else:
-            return False
-
-
-class SetQuestions():
-    def __init__(self, driver):
-        self.questions = self.set_question_types(driver)
-        
-        
-    def set_question_types(self, driver):
-        type_classes = {'AgroKb': Text,
-                        'oyXaNc': MultipleChoice,
-                        'Y6Myld': CheckBoxes,
-                        'vQES8d': DropDown,
-                        'PY6Xd':  LinearScale,
-                        'e12QUd': Grid,
-                        'PfQ8Lb': Time,
-                        None:     None}
-        
-        type_jscontroller= {"lLliLe": Date}
-        
-        q_windows = driver.find_elements(By.CLASS_NAME, 'Qr7Oae')
-        questions = []
-        
-        for idx, window in enumerate(q_windows):
-            field_xpath = f'//*[@id="mG61Hd"]/div[2]/div/div[2]/div[{idx+1}]/div/div/div[2]'
-            question_field_holder = driver.find_element(By.XPATH, field_xpath)
-            field_class = question_field_holder.get_dom_attribute('class')
-            
-            if field_class is not None:
-                question = type_classes[field_class](window)
-                questions.append(question) 
-            else:
-                field_jscontroller = question_field_holder.get_dom_attribute('jscontroller')
-                question = type_jscontroller[field_jscontroller](window)
-                questions.append(question)
-                
-        return questions
-
-
-    def get_questions(self):
-        return self.questions
-
-
-
-# class SetQuestions():
-#     def __init__(self, driver):
-#         self.question_holders = driver.find_elements(By.CLASS_NAME, 'Qr7Oae')
-#         self.questions = self.set_question_types()
-        
-#     def set_question_types(self):
-#         q_types = [ShortAnswer, Paragraph, MultipleChoice, CheckBoxes, Grid, Date, Time]
-#         questions = []
-#         for holder in self.question_holders:
-#             for q_type in q_types:
-#                 try:
-#                     q = q_type(holder)
-#                     questions.append(q)
-#                     break
-#                 except:
-#                     pass
-                
-#         return questions
-                
-#     def get_questions(self):
-#         return self.questions
+from iquestion import IQuestion
         
 
 class Text(IQuestion):
@@ -102,24 +23,6 @@ class Text(IQuestion):
     def answer(self, answer):
         self.answer_field.send_keys(answer)
           
-
-# class ShortAnswer(IQuestion):
-#     def __init__(self, question_holder):
-#         super().__init__(question_holder)
-#         self.answer_field = self.holder.find_element(By.CLASS_NAME, 'whsOnd')
-        
-#     def answer(self, answer):
-#         self.answer_field.send_keys(answer)
-        
-     
-# class Paragraph(IQuestion):
-#     def __init__(self, question_holder):
-#         super().__init__(question_holder)
-#         self.answer_field = self.holder.find_element(By.CLASS_NAME, 'KHxj8b')
-
-#     def answer(self, answer):
-#         self.answer_field.send_keys(answer)
-        
         
 class MultipleChoice(IQuestion):
     def __init__(self, question_holder):
@@ -243,17 +146,12 @@ class Date(IQuestion):
         self.answer_field = self.holder.find_element(By.CLASS_NAME, 'A6uyJd')
         self.answer_labels = self.set_answer_labels()
         self.date_answer_options = self.answer_field.find_elements(By.CLASS_NAME, 'whsOnd')
-        
-        print(self.answer_labels)
        
     def set_answer_labels(self):
         full_date = self.answer_field.find_elements(By.CLASS_NAME, 'ds3H7c')
         date_time = self.answer_field.find_elements(By.CLASS_NAME, 'UaWVmb')
         full_date_label = list(map(lambda x: x.text, full_date))
         date_time_labels = list(map(lambda x: x.text, date_time))
-        
-        print(full_date, date_time)
-        print(full_date_label, date_time_labels)
                 
         return full_date_label + date_time_labels
 
@@ -269,33 +167,19 @@ class Time(IQuestion):
         self.answer_field = self.holder.find_element(By.CLASS_NAME, 'ocBCTb')
         self.answer_labels = self.set_answer_labels()
         self.date_answer_options = self.answer_field.find_elements(By.CLASS_NAME, 'whsOnd')
-        
-
-       
+    
     def set_answer_labels(self):
         full_date = self.answer_field.find_elements(By.CLASS_NAME, 'ds3H7c')
         date_time = self.answer_field.find_elements(By.CLASS_NAME, 'UaWVmb')
         full_date_label = list(map(lambda x: x.text, full_date))
         date_time_labels = list(map(lambda x: x.text, date_time))
         
-
-                
         return full_date_label + date_time_labels
 
         
     def answer(self, args):
         for option in self.date_answer_options:
             option.send_keys(args)
-            
-            
-class Button():
-    def __init__(self, driver):
-        self.holder = driver.find_element(By.CLASS_NAME, 'lRwqcd')        
-        self.button_field = self.holder.find_element(By.CLASS_NAME, 'uArJ5e')
-        
-    def click(self):
-        self.button_field.click()
-        
         
         
 
