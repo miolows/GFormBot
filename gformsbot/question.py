@@ -2,148 +2,99 @@ from selenium.webdriver.common.by import By
 import time
 import numpy as np
 
-from iquestion import IQuestion
+from iquestion import IQuestion, IChoiceQuestion
         
 
 class Text(IQuestion):
-    def __init__(self, question_holder):
-        super().__init__(question_holder)
-        self.check_type()
-        self.answer_field = self.holder.find_element(By.CLASS_NAME, self.row_type)
-        
-    def check_type(self):
-        row_types = ['whsOnd', 'KHxj8b']
-        for row_type in row_types:
-            rows = self.holder.find_elements(By.CLASS_NAME, row_type)
-            if len(rows)>0:
-                self.row_type = row_type
-                break
-        
-            
+    def __init__(self, question_window):
+        super().__init__(question_window, 'whsOnd', 'KHxj8b')
+    
     def answer(self, answer):
         self.answer_field.send_keys(answer)
           
         
-class MultipleChoice(IQuestion):
-    def __init__(self, question_holder):
-        super().__init__(question_holder)
-        self.answer_field = self.holder.find_element(By.CLASS_NAME, 'oyXaNc')
-        self.answer_options = self.answer_field.find_elements(By.CLASS_NAME, 'nWQGrd')
-        self.answers = list(map(lambda x: x.find_element(By.CLASS_NAME, 'aDTYNe').text, self.answer_options))
-        self.check_last_option()
+class MultipleChoice(IChoiceQuestion):
+    def __init__(self, question_window):
+        super().__init__(question_window, 'oyXaNc', 
+                         options='nWQGrd', labels='aDTYNe', text_holder='pIDwKe', text='Hvn9fb')
         
-    def check_last_option(self):
-        #check if the last option is the user's own answer
-        try:
-            text_holder = self.answer_options[-1].find_element(By.CLASS_NAME, 'pIDwKe')
-            self.text_field = text_holder.find_element(By.CLASS_NAME, 'Hvn9fb')
-            self.own_answer = True
-        except:
-            self.own_answer = False
- 
-    def answer(self, n, text=''):
-        ans = self.answer_options[n]
-        ans.click()
-        if ans == self.answer_options[-1] and self.own_answer:
-            self.text_field.send_keys(text)            
 
-
-class CheckBoxes(IQuestion):
-    def __init__(self, question_holder):
-        super().__init__(question_holder)
-        self.answer_field = self.holder.find_element(By.CLASS_NAME, 'Y6Myld')
-        self.answer_options = self.answer_field.find_elements(By.CLASS_NAME, 'eBFwI')
-        self.answers = list(map(lambda x: x.find_element(By.CLASS_NAME, 'aDTYNe').text, self.answer_options))
-        self.check_last_option()
+class CheckBoxes(IChoiceQuestion):
+    def __init__(self, question_window):
+        super().__init__(question_window, 'Y6Myld', 
+                         options='eBFwI', labels='aDTYNe', text_holder='xVfcde', text='Hvn9fb')
         
-    def check_last_option(self):
-        #check if the last option is the user's own answer
-        try:
-            text_holder = self.answer_options[-1].find_element(By.CLASS_NAME, 'xVfcde')
-            self.text_field = text_holder.find_element(By.CLASS_NAME, 'Hvn9fb')
-            self.own_answer = True
-        except:
-            self.own_answer = False
- 
-    def answer(self, n, text=''):
-        ans = self.answer_options[n]
-        ans.click()
-        if ans == self.answer_options[-1] and self.own_answer:
-            self.text_field.send_keys(text)      
 
+class LinearScale(IQuestion):
+    def __init__(self, question_window):
+        super().__init__(question_window, 'N9Qcwe')
+        self.answer_options = self.elements(self.answer_field, 'T5pZmf')
+        self.answer_labels = self.all_elements_text(self.answer_options, 'Zki2Ve')
+        print(self.answer_labels)
 
-class DropDown(IQuestion):
-    def __init__(self, question_holder):
-        super().__init__(question_holder)
-        self.answer_field = self.holder.find_element(By.CLASS_NAME, 'vQES8d')
-        self.hidden_answers = self.answer_field.find_element(By.CLASS_NAME, 'ry3kXd')
-        self.expanded_answers = self.answer_field.find_element(By.CLASS_NAME, 'OA0qNb')
 
     def answer(self, n):
+        ans = self.answer_options[n]
+        ans.click()
+        
+
+class DropDown(IQuestion):
+    def __init__(self, question_window):
+        super().__init__(question_window, 'vQES8d')
+        self.hidden_answers = self.element(self.answer_field, 'ry3kXd')
+        self.expanded_answers = self.element(self.answer_field, 'OA0qNb')
+
+    def expand(self):
         self.hidden_answers.click()
         time.sleep(0.3)
-        self.answer_options = self.expanded_answers.find_elements(By.CLASS_NAME, 'MocG8c')
-        self.answers = list(map(lambda x: x.find_element(By.CLASS_NAME, 'vRMGwf').text,
-                                self.answer_options))
+        self.answer_options = self.elements(self.expanded_answers, 'MocG8c')
+        self.answer_labels = self.all_elements_text(self.answer_options, 'vRMGwf')
+
+    def answer(self, n):
+        self.expand()
         self.answer_options[n].click()
 
 
-class LinearScale(IQuestion):
-    def __init__(self, question_holder):
-        super().__init__(question_holder)
-        self.answer_field = self.holder.find_element(By.CLASS_NAME, 'PY6Xd')
-        self.answer_holders = self.answer_field.find_elements(By.CLASS_NAME, 'T5pZmf')
-        self.answer_options = list(map(lambda x: x.find_element(By.CLASS_NAME, 'eRqjfd'),
-                                       self.answer_holders))
-        self.answers = list(map(lambda x: x.find_element(By.CLASS_NAME, 'Zki2Ve').text,
-                                       self.answer_holders))
-        
-    def answer(self, n):
-        ans = self.answer_options[n]
-        ans.click()
-        
-                    
 class Grid(IQuestion):
     ''' Handle Multiple choice grid and Tick box grid questions'''
-    def __init__(self, question_holder, row_type=None):
-        super().__init__(question_holder)
-        self.answer_field = self.holder.find_element(By.CLASS_NAME, 'gTGYUd')
-        self.row_type = row_type
-        
-        if self.row_type is None:
-            row_types = ['EzyPc', 'lLfZXe']
-            for t in row_types:
-                rows = self.answer_field.find_elements(By.CLASS_NAME, t)
-                if len(rows)>0:
-                    self.row_type = t
-                    break
-        
+    def __init__(self, question_window):
+        super().__init__(question_window, 'gTGYUd')        
         self.grid = self.get_grid()
-        self.column_labels = list(map(lambda x: x.text, self.grid[0,1:]))
-        self.row_labels = list(map(lambda x: x.text, self.grid[1:,0]))
+        self.column_labels = self.elements_text(self.grid[0,1:])
+        self.row_labels = self.elements_text(self.grid[1:,0])
         self.answer_options = self.grid[1:,1:]
+        
+    def get_rows(self, holder):
+        row_types = ['EzyPc', 'lLfZXe']
+        for row_type in row_types:
+            out = self.elements(holder, row_type)
+            if len(out)>0:
+                return out
+                break    
 
     def get_grid(self):
         grid = []
-        row_zero = self.answer_field.find_element(By.CLASS_NAME, 'ssX1Bd')
-        rows = self.answer_field.find_elements(By.CLASS_NAME, self.row_type)
-        grid.append(row_zero.find_elements(By.CLASS_NAME, 'V4d7Ke'))
-        for r in rows:
-            grid.append(r.find_elements(By.CLASS_NAME, 'V4d7Ke'))
+        header = self.element(self.answer_field, 'ssX1Bd')
+        rows = self.get_rows(self.answer_field)
+        header_elements = self.elements(header, 'V4d7Ke')
+        
+        grid.append(header_elements)
+        for row in rows:
+            row_elements = self.elements(row, 'V4d7Ke')
+            grid.append(row_elements)
+            
         return np.array(grid)
            
+    
     def answer(self, *args):
-        print(self.column_labels, self.row_labels)
-        print(self.grid.shape)
         for arg in args:
             x,y = arg
             self.answer_options[y,x].click()
 
 
 class Date(IQuestion):
-    def __init__(self, question_holder):
-        super().__init__(question_holder)
-        self.answer_field = self.holder.find_element(By.CLASS_NAME, 'A6uyJd')
+    def __init__(self, question_window):
+        super().__init__(question_window, 'A6uyJd')
         self.answer_labels = self.set_answer_labels()
         self.date_answer_options = self.answer_field.find_elements(By.CLASS_NAME, 'whsOnd')
        
@@ -162,9 +113,8 @@ class Date(IQuestion):
             
             
 class Time(IQuestion):
-    def __init__(self, question_holder):
-        super().__init__(question_holder)
-        self.answer_field = self.holder.find_element(By.CLASS_NAME, 'ocBCTb')
+    def __init__(self, question_window):
+        super().__init__(question_window, 'ocBCTb')
         self.answer_labels = self.set_answer_labels()
         self.date_answer_options = self.answer_field.find_elements(By.CLASS_NAME, 'whsOnd')
     

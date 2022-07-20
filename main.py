@@ -1,8 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.remote.webelement import WebElement
 
 from gformsbot.set import SetQuestions
 
@@ -13,6 +11,7 @@ set_q = SetQuestions(driver)
 questions = set_q.get_questions()
 
 for q in questions:
+    print(q)
     try:
         q.answer(1)
     except:
