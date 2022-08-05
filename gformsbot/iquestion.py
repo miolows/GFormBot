@@ -6,7 +6,7 @@ class IQuestion():
         self.window = question_window
         self.required = self.is_required(question_window)
         self.question_text = self.element_text(question_window, 'M7eMe')
-        self.answer_field = self.set_answer_field(question_window, *args)
+        self.answer_field = self.find_field(question_window, *args)
 
     def __str__(self):
         return self.question_text
@@ -39,15 +39,35 @@ class IQuestion():
     def is_required(self, holder):
         return self.contains(holder, 'vnumgf')
     
-    def set_answer_field(self, holder, *args):
+    def find_field(self, holder, *args):
         for c in args:
             out = self.elements(self.window, c)
             if len(out)>0:
                 return out[0]
-                break    
+                break
+            
+    def answer_dict(self, labels, options):
+        ans_dict = {labels[i]: options[i] for i in range(len(labels))}
+        return ans_dict
 
-                
+
 class IChoiceQuestion(IQuestion):
+    def __init__(self, question_holder, options_class, **kwargs):
+        super().__init__(question_holder, options_class)
+        self.answer_options = self.elements(self.answer_field, kwargs['options'])
+        self.answer_labels = self.all_elements_text(self.answer_options, kwargs['labels'])
+        
+    def answer_dict(self):
+        ans_dict = {self.answer_labels[i]: self.answer_options[i] for i in range(len(self.answer_labels))}
+        return ans_dict
+    
+    def answer(self, *args):
+        answers = self.set_answer_dict()
+        for arg in args:
+            answers[arg].click()
+        
+                
+class IMultiChoiceQuestion(IQuestion):
     def __init__(self, question_holder, options_class, **kwargs):
         super().__init__(question_holder, options_class)
         self.answer_options = self.elements(self.answer_field, kwargs['options'])
@@ -66,10 +86,9 @@ class IChoiceQuestion(IQuestion):
             return None
  
     
-    def answer(self, n, text=''):
-        ans = self.answer_options[n]
-        ans.click()
-        
-        if ans == self.answer_options[-1]:
-            if self.own_answer is not None:
-                self.own_answer.send_keys(text)   
+    def answer(self, ans, **kwargs):
+        answers = self.answer_dict(self.answer_labels, self.answer_options)
+        for a in ans:
+            answers[a].click()        
+            if a == self.answer_options[-1]:
+                self.own_answer.send_keys(kwargs['text'])
