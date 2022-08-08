@@ -1,8 +1,7 @@
-from selenium.webdriver.common.by import By
 import time
 import numpy as np
 
-from iquestion import IQuestion, IChoiceQuestion, IMultiChoiceQuestion
+from iquestion import IQuestion, IMultiChoiceQuestion
         
 
 class Text(IQuestion):

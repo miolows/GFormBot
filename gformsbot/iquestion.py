@@ -51,20 +51,20 @@ class IQuestion():
         return ans_dict
 
 
-class IChoiceQuestion(IQuestion):
-    def __init__(self, question_holder, options_class, **kwargs):
-        super().__init__(question_holder, options_class)
-        self.answer_options = self.elements(self.answer_field, kwargs['options'])
-        self.answer_labels = self.all_elements_text(self.answer_options, kwargs['labels'])
+# class IChoiceQuestion(IQuestion):
+#     def __init__(self, question_holder, options_class, **kwargs):
+#         super().__init__(question_holder, options_class)
+#         self.answer_options = self.elements(self.answer_field, kwargs['options'])
+#         self.answer_labels = self.all_elements_text(self.answer_options, kwargs['labels'])
         
-    def answer_dict(self):
-        ans_dict = {self.answer_labels[i]: self.answer_options[i] for i in range(len(self.answer_labels))}
-        return ans_dict
+#     def answer_dict(self):
+#         ans_dict = {self.answer_labels[i]: self.answer_options[i] for i in range(len(self.answer_labels))}
+#         return ans_dict
     
-    def answer(self, *args):
-        answers = self.set_answer_dict()
-        for arg in args:
-            answers[arg].click()
+#     def answer(self, *args):
+#         answers = self.set_answer_dict()
+#         for arg in args:
+#             answers[arg].click()
         
                 
 class IMultiChoiceQuestion(IQuestion):
