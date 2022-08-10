@@ -20,7 +20,6 @@ class Bot():
         service = ChromeService(driver_path)
         options = webdriver.ChromeOptions()
         options.add_argument("--lang=en")
-        # options.add_experimental_option("prefs", {'intl.accept_languages': 'en'})
         driver = webdriver.Chrome(service=service, options=options)
         return driver
     
