@@ -8,8 +8,9 @@ class Text(IQuestion):
     def __init__(self, question_window):
         super().__init__(question_window, 'whsOnd', 'KHxj8b')
     
-    def answer(self, a):
-        self.answer_field.send_keys(a)
+    def answer(self, *answers):
+        for ans in answers:
+            self.answer_field.send_keys(ans)
             
             
 class LinearScale(IQuestion):
@@ -18,12 +19,10 @@ class LinearScale(IQuestion):
         self.answer_options = self.elements(self.answer_field, 'T5pZmf')
         self.answer_labels = self.all_elements_text(self.answer_options, 'Zki2Ve')
 
-    def answer(self, ans):
-        answers = self.answer_dict(self.answer_labels, self.answer_options)
-        answers[ans].click() 
-        # for a in ans:
-            
-     
+    def answer(self, *answers):
+        answer_d = self.answer_dict(self.answer_labels, self.answer_options)
+        for ans in answers:
+            answer_d.get(ans).click() 
         
 class MultipleChoice(IMultiChoiceQuestion):
     def __init__(self, question_window):
@@ -49,10 +48,11 @@ class DropDown(IQuestion):
         self.answer_options = self.elements(self.expanded_answers, 'MocG8c')
         self.answer_labels = self.all_elements_text(self.answer_options, 'vRMGwf')
 
-    def answer(self, arg):
+    def answer(self, *answers):
         self.expand()
-        answers = self.answer_dict(self.answer_labels, self.answer_options)
-        answers[arg].click()    
+        answer_d = self.answer_dict(self.answer_labels, self.answer_options)
+        for ans in answers:
+            answer_d.get(ans).click()
         time.sleep(0.3)
         
 
@@ -87,12 +87,15 @@ class Grid(IQuestion):
         return np.array(grid)
     
            
-    def answer(self, args):
+    def answer(self, *answers):
         r_coords = {self.row_labels[r]: r for r in range(len(self.row_labels))}
         c_coords = {self.column_labels[c]: c for c in range(len(self.column_labels))}
-        for arg in args:
-            row, column = arg
-            self.answer_options[r_coords[row], c_coords[column]].click()
+        
+        for ans in answers:
+            row, column = ans
+            r_c = r_coords.get(row)
+            c_c = c_coords.get(column)
+            self.answer_options[r_c, c_c].click()
 
 
        
@@ -107,12 +110,12 @@ class Time(IQuestion):
         answer_options = self.all_elements(answer_holders, 'whsOnd')
         return answer_options
         
-    def answer(self, ans):
-        time = ans.get('Time')
-        time_answers = time.split(':')
+    def answer(self, *answers):
+        for ans in answers: 
+            time_answers = ans.split(':')
             
-        for field, answer in zip(self.time_options, time_answers):
-            field.send_keys(answer)
+            for field, answer in zip(self.time_options, time_answers):
+                field.send_keys(answer)
 
 
 

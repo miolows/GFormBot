@@ -49,6 +49,7 @@ class IQuestion():
     def answer_dict(self, labels, options):
         ans_dict = {labels[i]: options[i] for i in range(len(labels))}
         return ans_dict
+    
 
 
 # class IChoiceQuestion(IQuestion):
@@ -86,9 +87,11 @@ class IMultiChoiceQuestion(IQuestion):
             return None
  
     
-    def answer(self, ans, **kwargs):
-        answers = self.answer_dict(self.answer_labels, self.answer_options)
-        for a in ans:
-            answers[a].click()        
-            if a == self.answer_options[-1]:
-                self.own_answer.send_keys(kwargs['text'])
+    def answer(self, *answers):
+        answers_d = self.answer_dict(self.answer_labels, self.answer_options)
+        for ans in answers:
+            a = answers_d.get(ans)
+            if a is not None:
+                a.click()
+            else:
+                self.own_answer.send_keys(ans)

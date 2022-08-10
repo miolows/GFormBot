@@ -36,7 +36,7 @@ class SubmittedSection(ISection):
         self.button = self.driver.find_element(By.XPATH, '/html/body/div[1]/div[2]/div[1]/div/div[4]/a')
         
     def answer_questions(self, answers=None):
-        self.proceed()
+        pass
         
 # class Section():
 #     def __init__(self, driver):

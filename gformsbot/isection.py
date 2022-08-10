@@ -61,5 +61,5 @@ class ISection():
         if answers is not None:
             for q in self.questions:
                 question_text = str(q)
-                q.answer(answers.get(question_text))
+                q.answer(*answers.get(question_text))
     
