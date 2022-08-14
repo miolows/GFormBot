@@ -3,7 +3,7 @@
   "short answer"
  ],
  "Q2 - short answer (required)": [
-  "short answer"
+  ""
  ],
  "Q3 - paragraph": [
   "looooooooooooooooooooooooooooooooooooooooooooooooong answer"
@@ -15,11 +15,11 @@
   "Option 1"
  ],
  "Q6 - Multiple choice (required)": [
-  "Option 2"
+  ""
  ],
  "Q7 - checkboxes": [
   "Option 1",
-  "Option 2"
+  "vsdgsb"
  ],
  "Q8 - checkboxes (with a response validation)": [
   "Option 1",
@@ -27,8 +27,7 @@
   "Option 3"
  ],
  "Q9 - checkboxes (required)": [
-  "Option 2",
-  "Option 3"
+  "Option 1"
  ],
  "Q10 - Drop-down": [
   "Option 1"

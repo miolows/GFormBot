@@ -5,7 +5,7 @@ import json
 import os
 import time
 
-from gformsbot.section import section_handler
+from gformsbot.section import FirstSection, NextSection, SubmittedSection
 
 class Bot():
     def __init__(self, web_adress, forms_to_fill, answer_dir='./answers'):
@@ -24,13 +24,20 @@ class Bot():
         return driver
     
     def set_section(self):
-        section = section_handler(self.driver)
+        try:
+            section = NextSection(self.driver)
+        except:
+            try:
+                section = FirstSection(self.driver)
+            except:
+                section = SubmittedSection(self.driver)
+        section.set_questions()
         return section
         
     def load_answer_file(self, file_name):
         path = os.path.join(self.answer_dir, f'{file_name}.json')
         try:
-            with open(path, "r") as json_file:      
+            with open(path, "r") as json_file:
                 data = json.load(json_file)
                 return data
         except FileNotFoundError:
@@ -42,15 +49,25 @@ class Bot():
             section_answers = self.load_answer_file(str(section))
             section.answer_questions(section_answers)
             
+    def proceed_error(self, section):
+        print("Error")
+        msg = section.find_error()
+        raise Exception(*[f'Question {m[0]}: {m[1]}' for m in msg])
+            
             
     def fill_forms(self):
+        previous_section = ""
         while self.index < self.forms:
             section = self.set_section()
+            if str(section) == previous_section:
+                    self.proceed_error(section)
+                    
             if str(section) == 'Form Submitted':
                 self.index = self.index + 1
             else:
                 self.answer_section_question(section)
-                
+            
             section.proceed()
+            previous_section = str(section)
             time.sleep(0.3)
         self.driver.close()

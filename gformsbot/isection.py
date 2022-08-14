@@ -21,7 +21,15 @@ class ISection():
             field_class = field[0].get_dom_attribute('class')
             component = organizer.get(field_class)
             return component
-    
+        
+    def find_error(self):
+        error_msg = []
+        for w in self.questions:
+            error = [e.text for e in w.error_field.find_elements(By.CLASS_NAME, 'RHiWt')]
+            print(len(error))
+            if len(error):
+                error_msg.append([str(w), error[0]])
+        return error_msg
         
     def check_question_window(self, index, window, organizer):
         xpaths = [f'//*[@id="mG61Hd"]/div[2]/div/div[2]/div[{index+1}]/div/div/div[2]',
@@ -62,4 +70,7 @@ class ISection():
             for q in self.questions:
                 question_text = str(q)
                 q.answer(*answers.get(question_text))
+        else:
+            for q in self.questions:
+                q.skip()
     

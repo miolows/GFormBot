@@ -1,16 +1,41 @@
 from selenium.webdriver.common.by import By
+import functools
+import time
+
+class SkipError(Exception):
+    pass
+
+class AnswerError(Exception):
+    pass
+
+
+# def error_check(func):
+#     @functools.wraps(func)
+#     def wrapper(self, *args, **kwargs):
+#         print('wrapper')
+#         value = func(self, *args, **kwargs)
+#         # self.window.focus()
+#         error = self.error_field.find_elements(By.CLASS_NAME, 'RHiWt')
+#         print(len(error))
+#         if len(error):
+#             raise AnswerError(f'Question {self}: {error[0].text}')
+#         else:
+#             return value
+#     return wrapper  
+
 
 
 class IQuestion():
     def __init__(self, question_window, *args):
         self.window = question_window
         self.required = self.is_required(question_window)
+        self.error_field = self.element(question_window, 'SL4Sz')
         self.question_text = self.element_text(question_window, 'M7eMe')
         self.answer_field = self.find_field(question_window, *args)
 
     def __str__(self):
         return self.question_text
-
+    
     def element(self, holder, class_name):
         return holder.find_element(By.CLASS_NAME, class_name)
     
@@ -31,10 +56,7 @@ class IQuestion():
     
     def contains(self, holder, class_name):
         req = self.elements(holder, class_name)
-        if len(req)>0:
-            return True
-        else:
-            return False
+        return bool(len(req))
     
     def is_required(self, holder):
         return self.contains(holder, 'vnumgf')
@@ -42,7 +64,7 @@ class IQuestion():
     def find_field(self, holder, *args):
         for c in args:
             out = self.elements(self.window, c)
-            if len(out)>0:
+            if len(out):
                 return out[0]
                 break
             
@@ -50,6 +72,12 @@ class IQuestion():
         ans_dict = {labels[i]: options[i] for i in range(len(labels))}
         return ans_dict
     
+    def skip(self):
+        if self.required:
+            raise SkipError(f'Question "{self}" is required and cannot be skipped.')
+        else:
+            pass
+
 
 class IMultiChoiceQuestion(IQuestion):
     def __init__(self, question_holder, options_class, **kwargs):
@@ -69,7 +97,7 @@ class IMultiChoiceQuestion(IQuestion):
         else:
             return None
  
-    
+    # @error_check
     def answer(self, *answers):
         answers_d = self.answer_dict(self.answer_labels, self.answer_options)
         for ans in answers:
@@ -77,4 +105,5 @@ class IMultiChoiceQuestion(IQuestion):
             if a is not None:
                 a.click()
             else:
-                self.own_answer.send_keys(ans)
+                if self.own_answer is not None:
+                    self.own_answer.send_keys(ans)
