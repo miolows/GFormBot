@@ -31,7 +31,7 @@ if __name__ == '__main__':
     s1.add_answer('Q6 - Multiple choice (required)', 
                   'Option 2')
     s1.add_answer('Q7 - checkboxes',
-                  'Option 1', 'vsdgsb')
+                  'Option 1', 'Test')
     s1.add_answer('Q8 - checkboxes (with a response validation)',
                   'Option 1', 'Option 2', 'Option 3')
     s1.add_answer('Q9 - checkboxes (required)', 
@@ -74,15 +74,10 @@ if __name__ == '__main__':
     s2.add_answer('Rate that doggo',
                   '10')
     s2.add_answer('Cats vs Dogs',
-                  'Cats')
+                  'Dogs')
     s2.save()
     
     s3 =  AnswerGenerator('Section 3')
     s3.add_answer('Lobby',
                   'Go to section 4')
-    s3.save()
-    
-    l = [1]
-    
-    print(bool(len(l)))
-    
+    s3.save()    

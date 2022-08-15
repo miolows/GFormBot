@@ -8,23 +8,6 @@ class SkipError(Exception):
 class AnswerError(Exception):
     pass
 
-
-# def error_check(func):
-#     @functools.wraps(func)
-#     def wrapper(self, *args, **kwargs):
-#         print('wrapper')
-#         value = func(self, *args, **kwargs)
-#         # self.window.focus()
-#         error = self.error_field.find_elements(By.CLASS_NAME, 'RHiWt')
-#         print(len(error))
-#         if len(error):
-#             raise AnswerError(f'Question {self}: {error[0].text}')
-#         else:
-#             return value
-#     return wrapper  
-
-
-
 class IQuestion():
     def __init__(self, question_window, *args):
         self.window = question_window

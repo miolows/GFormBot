@@ -3,17 +3,6 @@ from selenium.webdriver.common.by import By
 import question
 from isection import ISection
 
-
-def section_handler(driver):
-    try:
-        section = NextSection(driver)
-    except:
-        try:
-            section = FirstSection(driver)
-        except:
-            section = SubmittedSection(driver)
-    section.set_questions()
-    return section
             
 class NextSection(ISection):
     def __init__(self, driver):

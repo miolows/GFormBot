@@ -8,7 +8,7 @@ class Text(IQuestion):
     def __init__(self, question_window):
         super().__init__(question_window, 'whsOnd', 'KHxj8b')
     
-    # @error_check
+
     def answer(self, *answers):
         for ans in answers:
             self.answer_field.send_keys(ans)
@@ -20,7 +20,7 @@ class LinearScale(IQuestion):
         self.answer_options = self.elements(self.answer_field, 'T5pZmf')
         self.answer_labels = self.all_elements_text(self.answer_options, 'Zki2Ve')
     
-    # @error_check
+
     def answer(self, *answers):
         answer_d = self.answer_dict(self.answer_labels, self.answer_options)
         for ans in answers:
@@ -50,7 +50,7 @@ class DropDown(IQuestion):
         self.answer_options = self.elements(self.expanded_answers, 'MocG8c')
         self.answer_labels = self.all_elements_text(self.answer_options, 'vRMGwf')
 
-    # @error_check
+
     def answer(self, *answers):
         self.expand()
         answer_d = self.answer_dict(self.answer_labels, self.answer_options)
@@ -89,7 +89,7 @@ class Grid(IQuestion):
             grid.append(row_elements)
         return np.array(grid)
     
-    # @error_check    
+
     def answer(self, *answers):
         r_coords = {self.row_labels[r]: r for r in range(len(self.row_labels))}
         c_coords = {self.column_labels[c]: c for c in range(len(self.column_labels))}
@@ -113,7 +113,7 @@ class Time(IQuestion):
         answer_options = self.all_elements(answer_holders, 'whsOnd')
         return answer_options
     
-    # @error_check    
+
     def answer(self, *answers):
         for ans in answers: 
             time_answers = ans.split(':')

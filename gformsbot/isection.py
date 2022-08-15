@@ -26,7 +26,6 @@ class ISection():
         error_msg = []
         for w in self.questions:
             error = [e.text for e in w.error_field.find_elements(By.CLASS_NAME, 'RHiWt')]
-            print(len(error))
             if len(error):
                 error_msg.append([str(w), error[0]])
         return error_msg
@@ -56,8 +55,6 @@ class ISection():
             question_window = self.check_question_window(index, window, to_answer)
             if question_window is not None:
                 question_windows.append(question_window)
-            # else:
-            #     print('Unsupported window type')
         return question_windows
     
     
